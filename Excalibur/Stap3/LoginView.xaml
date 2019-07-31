@@ -7,20 +7,18 @@
 
         <StatusBar DockPanel.Dock="Bottom">
             <StatusBarItem>
-                <TextBlock Name="StatusText" Text="{Binding Status, Mode=OneWay}" />
+                <TextBlock Name="StatusText" />
             </StatusBarItem>
         </StatusBar>
 
         <StackPanel Orientation="Horizontal" Margin="60, 20">
             <StackPanel Orientation="Vertical" Margin="20">
                 <Label>Username</Label>
-                <TextBox Name="UsernameText" Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Name="UsernameText" />
                 <Label>Password</Label>
-                <TextBox Name="PasswordText" Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Name="PasswordText" />
                 <Label>Wait for it... (in seconds)</Label>
-                <ComboBox Name="SleepTimeSelection" 
-                          ItemsSource="{Binding AvailableSleepTimes, Mode=OneWay}"
-                          SelectedItem="{Binding SelectedSleepTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <ComboBox Name="SleepTimeSelection">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding}" />

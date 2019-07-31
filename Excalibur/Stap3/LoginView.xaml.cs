@@ -1,75 +1,36 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Runtime.CompilerServices;
+using ReactiveUI;
 
 namespace Excalibur.Stap3
 {
-    public partial class LoginView : INotifyPropertyChanged
+    public partial class LoginView : IViewFor<LoginViewModel>
     {
-        private string _username;
-        private string _password;
-        private string _status;
-        private int _selectedSleepTime;
-
-        public string Username
+        object IViewFor.ViewModel
         {
-            get => _username;
-            set
-            {
-                _username = value;
-                OnPropertyChanged();
-            }
+            get => ViewModel;
+            set => ViewModel = value as LoginViewModel;
         }
 
-        public string Password
-        {
-            get => _password;
-            set
-            {
-                _password = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string Status
-        {
-            get => _status;
-            set
-            {
-                _status = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public List<int> AvailableSleepTimes { get; }
-
-        public int SelectedSleepTime
-        {
-            get => _selectedSleepTime;
-            set
-            {
-                _selectedSleepTime = value;
-                OnPropertyChanged();
-            }
-        }
-
+        public LoginViewModel ViewModel { get; set; }
 
         public LoginView()
         {
             InitializeComponent();
-            DataContext = this;
+            ViewModel = new LoginViewModel();
 
-            AvailableSleepTimes = new List<int>(Enumerable.Range(0, 10));
-            SelectedSleepTime = 2;
+            this.WhenActivated(disposables =>
+            {
+                this.Bind(ViewModel, vm => vm.Username, v => v.UsernameText.Text).DisposeWith(disposables);
+                this.Bind(ViewModel, vm => vm.Password, v => v.PasswordText.Text).DisposeWith(disposables);
+                this.Bind(ViewModel, vm => vm.Status, v => v.StatusText.Text).DisposeWith(disposables);
+                this.Bind(ViewModel, vm => vm.SelectedSleepTime, v => v.SleepTimeSelection.SelectedValue).DisposeWith(disposables);
+            });
+
         }
 
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }
