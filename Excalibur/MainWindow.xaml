@@ -11,6 +11,6 @@
         Height="450" Width="550"
         Title="Excalibur" ResizeMode="NoResize">
 
-        <stap1:LoginView />
+        <stap3:LoginView />
 
 </mah:MetroWindow>
