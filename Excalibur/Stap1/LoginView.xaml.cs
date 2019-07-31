@@ -2,6 +2,8 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Excalibur.Stap1
 {
@@ -11,6 +13,8 @@ namespace Excalibur.Stap1
         private string _password;
         private string _status;
         private int _selectedSleepTime;
+        private bool _processingLogin;
+        private bool _isLoginCanceled;
 
         public string Username
         {
@@ -19,6 +23,11 @@ namespace Excalibur.Stap1
             {
                 _username = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(LoginButtonIsEnabled));
+                if (_username == "error")
+                {
+                    throw new System.ApplicationException("Username niet toegestaan!");
+                }
             }
         }
 
@@ -29,6 +38,7 @@ namespace Excalibur.Stap1
             {
                 _password = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(LoginButtonIsEnabled));
             }
         }
 
@@ -54,6 +64,22 @@ namespace Excalibur.Stap1
             }
         }
 
+        public bool LoginButtonIsEnabled
+        {
+            get
+            {
+                if (!_processingLogin && !string.IsNullOrEmpty(Username) && !string.IsNullOrWhiteSpace(Password))
+                {
+                    return true;
+                }
+
+                Status = null;
+                return false;
+            }
+        }
+
+        public bool CancelButtonIsEnabled => _processingLogin && !_isLoginCanceled;
+
 
         public LoginView()
         {
@@ -67,9 +93,38 @@ namespace Excalibur.Stap1
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private async void LoginButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            Status = null;
+
+            _processingLogin = true;
+            OnPropertyChanged(nameof(LoginButtonIsEnabled));
+            OnPropertyChanged(nameof(CancelButtonIsEnabled));
+
+            await Task.Delay(SelectedSleepTime * 1000);
+
+            _processingLogin = false;
+            OnPropertyChanged(nameof(LoginButtonIsEnabled));
+            OnPropertyChanged(nameof(CancelButtonIsEnabled));
+
+            if (!_isLoginCanceled)
+            {
+                Status = Username == Password ? "Inloggen is gelukt" : "Inloggen is mislukt";
+            }
+
+            _isLoginCanceled = false;
+        }
+
+        private void CancelButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            Status = "Inloggen is afgebroken";
+            _isLoginCanceled = true;
+            OnPropertyChanged(nameof(CancelButtonIsEnabled));
         }
     }
 }
