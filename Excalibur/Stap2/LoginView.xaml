@@ -32,8 +32,8 @@
                         <ColumnDefinition />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" Name="LoginButton" Content="Login" />
-                    <Button Grid.Column="1" Name="CancelButton" Content="Cancel"  />
+                    <Button Grid.Column="0" Name="LoginButton" Content="Login" IsEnabled="{Binding LoginButtonIsEnabled}" Click="LoginButton_Click" />
+                    <Button Grid.Column="1" Name="CancelButton" Content="Cancel" IsEnabled="False" />
                 </Grid>
             </StackPanel>
 
